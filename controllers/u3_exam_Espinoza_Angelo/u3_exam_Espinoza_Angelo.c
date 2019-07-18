@@ -19,13 +19,17 @@
 
 /* MACROS */
 #define TIME_STEP 64
-#define MAX_BITS 65535
+#define MAX_BITS_OBJ 65535
+#define MAX_BITS_ENE 255
 #define RADIUS_WHEELS 0.04
 
 #define MAX_VELOCITY 30.3687
 #define VELOCITY_AUTONOMOUS 10
 #define VELOCITY_MANUAL 7.5
 #define DISTANCE_OBSTACLE 17
+#define DISTANCE_ENEMY_LVL1 40
+#define DISTANCE_ENEMY_LVL2 20
+#define DISTANCE_ENEMY_LVL3 10
 #define TURN_RATIO 45
 #define VELOCITY_POST 3
 
@@ -33,6 +37,8 @@
 
 /* PROTOFUNCTIONS */
 float bitsToCentimeters(float centimeters);
+
+float bitsToCentimeters2(float centimeters);
 
 void stopAllWheels(WbDeviceTag motor_1, WbDeviceTag motor_2,
                    WbDeviceTag motor_3);
@@ -44,6 +50,8 @@ float degreesSec2RadSec(void);
 void turnPost(WbDeviceTag motor_post);
 
 void turnGun(WbDeviceTag motor_gun);
+
+void stopPost(WbDeviceTag motor_post);
 
 void manual(int key, WbDeviceTag motor_1, WbDeviceTag motor_2,
             WbDeviceTag motor_3);
@@ -196,8 +204,8 @@ int main(int argc, char **argv) {
         distance_sensor_value2, msg4, position_sensor_value2, msg5,
         position_sensor_value3);
         printf("\t\t\t\t     %s %.2fm || %s %.2fm\n",
-        msg1, distance_sensor_value1 * 0.2/MAX_BITS, msg3,
-        distance_sensor_value2 * 0.2/MAX_BITS);
+        msg1, distance_sensor_value1 * 0.2/MAX_BITS_OBJ, msg3,
+        distance_sensor_value2 * 0.2/MAX_BITS_OBJ);
 
     };
 
@@ -208,7 +216,11 @@ int main(int argc, char **argv) {
 
 
 float bitsToCentimeters(float centimeters) {
-    return (MAX_BITS*centimeters)/(20);
+    return (MAX_BITS_OBJ*centimeters)/(20);
+}
+
+float bitsToCentimeters2(float centimeters) {
+    return (MAX_BITS_ENE*centimeters/(40));
 }
 
 void stopAllWheels(WbDeviceTag motor_1, WbDeviceTag motor_2,
@@ -297,6 +309,10 @@ void turnGun(WbDeviceTag motor_gun) {
     wb_motor_set_velocity(motor_gun, VELOCITY_POST);
 }
 
+void stopPost(WbDeviceTag motor_post) {
+    wb_motor_set_velocity(motor_post, 0);
+}
+
 void manual(int key, WbDeviceTag motor_1, WbDeviceTag motor_2,
             WbDeviceTag motor_3) {
     switch (key) {
@@ -342,8 +358,10 @@ void autonomous(WbDeviceTag motor_1, WbDeviceTag motor_2,
                 distance_sensor_value2, float desired_centimeters, WbDeviceTag
                 distance_detector, WbDeviceTag distance_gun) {
 
+
     /* CONSTANTLY MOVE THE POST TO DETECT ENEMIES*/
     turnPost(motor_post);
+    stopPost(motor_gun);
 
     /* VARIABLES */
     double position_sensor_detector_value = wb_position_sensor_get_value(
@@ -354,13 +372,31 @@ void autonomous(WbDeviceTag motor_1, WbDeviceTag motor_2,
                                    (distance_detector);
     double distance_detector_gun = wb_distance_sensor_get_value(distance_gun);
 
-    printf("DETECTOR %lf GUN %lf\n", distance_detector_value, distance_detector_gun);
+    float distance_enemy1 = bitsToCentimeters2(DISTANCE_ENEMY_LVL1);
+    float distance_enemy2 = bitsToCentimeters2(DISTANCE_ENEMY_LVL2);
+    float distance_enemy3 = bitsToCentimeters2(DISTANCE_ENEMY_LVL3);
+    float max_radians = 6.28319;
 
-    
+    int flag = 0;
 
+    printf("The encoder has passed %lf\n", position_sensor_detector_value);
+    printf("The distance detector%lf\n", distance_detector_value);
+    printf("The distance enemy %lf\n", distance_enemy1);
+
+    // printf("max_centimeters %f\n", max_centimeters);
+    if (distance_detector_value < distance_enemy1) {
+        stopRobot(motor_1, motor_2, motor_3);
+        stopPost(motor_post);
+        printf("The encoder has passed %lf\n", position_sensor_detector_value/2*PI);
+        printf("The distance detector%lf\n", distance_detector_value);
+        printf("The distance enemy %lf\n", distance_enemy1);
+        turnGun(motor_gun);
+        if (position_sensor_gun_value == position_sensor_detector_value) {
+            stopPost(motor_gun);
+        }
+    }
     /* MOVE FORWARD */
-    if (distance_sensor_value1 > desired_centimeters || distance_sensor_value2
-        > desired_centimeters) {
+    else if (distance_detector_value >= distance_enemy1) {
         moveForwardRobotAutonomous(motor_1, motor_2, motor_3);
         printf("Linear Velocity is: %.2lfm\n", linearVelocity(0.4));
     }
