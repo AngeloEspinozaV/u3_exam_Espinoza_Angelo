@@ -2,9 +2,10 @@
 WorldInfo {
 }
 Viewpoint {
-  orientation 0.00035944425752494917 0.9959168033818857 0.09027508815521691 3.149523406291659
-  position -0.965327865436692 0.12745348795205244 -0.13733131321579153
+  orientation 0.28232630877323933 0.8959857291955893 0.342784813625583 4.413090102859801
+  position -2.732046775236083 1.8245296294760955 -0.3730571970474231
   follow "robot"
+  followOrientation TRUE
 }
 TexturedBackground {
 }
@@ -779,56 +780,78 @@ Robot {
       translation -0.03 0.05 0
       rotation 0 1 0 1.57
       children [
-        Transform {
-          children [
-            Shape {
-              appearance PBRAppearance {
-                baseColor 0.9333333333333333 0.9333333333333333 0.9254901960784314
-                roughness 1
-                metalness 0
-              }
-              geometry Cylinder {
-                height 0.05
-                radius 0.01
-              }
-            }
-            Transform {
-              translation 0 0.019999999999999997 -0.01
-              children [
-                DEF DETECTOR_SH Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.9372549019607843 0.1607843137254902 0.1607843137254902
-                    roughness 1
-                    metalness 0
-                  }
-                  geometry Box {
-                    size 0.005 0.003 0.02
-                  }
-                }
-                DEF DETECTOR_DS DistanceSensor {
-                  rotation 0 1 0 1.5758
-                }
-              ]
-            }
-            Transform {
-              translation 0 0.01 -0.01
-              children [
-                DEF GUN_SH Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.45098039215686275 0.8235294117647058 0.08627450980392157
-                    roughness 1
-                    metalness 0
-                  }
-                  geometry Box {
-                    size 0.005 0.003 0.02
-                  }
-                }
-                DEF GUN_SH DistanceSensor {
-                  name "distance sensor(1)"
-                }
-              ]
+        HingeJoint {
+          jointParameters HingeJointParameters {
+            axis 0 1 0
+          }
+          device [
+            RotationalMotor {
+              name "motor_post"
+              maxVelocity 30.36872
+              maxTorque 0.847386219999996
             }
           ]
+          endPoint Solid {
+            children [
+              DEF POST_SH Transform {
+                children [
+                  DEF POST_SH Shape {
+                    appearance PBRAppearance {
+                      baseColor 0.9333333333333333 0.9333333333333333 0.9254901960784314
+                      roughness 1
+                      metalness 0
+                    }
+                    geometry Cylinder {
+                      height 0.05
+                      radius 0.01
+                    }
+                  }
+                  DEF DETECTOR_TR Transform {
+                    translation 0 0.019999999999999997 -0.01
+                    children [
+                      DEF DETECTOR_SH Shape {
+                        appearance PBRAppearance {
+                          baseColor 0.9372549019607843 0.1607843137254902 0.1607843137254902
+                          roughness 1
+                          metalness 0
+                        }
+                        geometry Box {
+                          size 0.005 0.003 0.02
+                        }
+                      }
+                      DEF DETECTOR_DS DistanceSensor {
+                        rotation 0 1 0 1.5758
+                        name "detector"
+                      }
+                    ]
+                  }
+                  DEF GUN_TR Transform {
+                    translation 0 0.01 -0.01
+                    children [
+                      DEF GUN_SH Shape {
+                        appearance PBRAppearance {
+                          baseColor 0.45098039215686275 0.8235294117647058 0.08627450980392157
+                          roughness 1
+                          metalness 0
+                        }
+                        geometry Box {
+                          size 0.005 0.003 0.015
+                        }
+                      }
+                      DEF GUN_SH DistanceSensor {
+                        rotation 0 1 0 1.5758
+                        name "gun"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+            name "solid(3)"
+            boundingObject USE POST_SH
+            physics Physics {
+            }
+          }
         }
       ]
     }

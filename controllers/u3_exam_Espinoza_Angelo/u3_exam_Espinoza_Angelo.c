@@ -1,6 +1,6 @@
 /*
- * File:          u3_project_Espinoza_Angelo.c
- * Date:          July 16th, 2019
+ * File:          u3_exam_Espinoza_Angelo.c
+ * Date:          July 18th, 2019
  * Description:
  * Author:        Angelo D. Espinoza Valarezo
  * Modifications:
@@ -27,6 +27,7 @@
 #define VELOCITY_MANUAL 7.5
 #define DISTANCE_OBSTACLE 17
 #define TURN_RATIO 45
+#define VELOCITY_POST 3
 
 #define PI 3.141592
 
@@ -40,12 +41,15 @@ float linearVelocity(float meters_per_second);
 
 float degreesSec2RadSec(void);
 
+void turnPost(WbDeviceTag motor_post);
+
 void manual(int key, WbDeviceTag motor_1, WbDeviceTag motor_2,
             WbDeviceTag motor_3);
 
 void autonomous(WbDeviceTag motor_1, WbDeviceTag motor_2,
-                WbDeviceTag motor_3, double distance_sensor_value1,
-                double distance_sensor_value2, float desired_centimeters);
+                WbDeviceTag motor_3, WbDeviceTag motor_post,
+                double distance_sensor_value1, double distance_sensor_value2,
+                float desired_centimeters);
 
 void stopRobot(WbDeviceTag motor_1, WbDeviceTag motor_2, WbDeviceTag motor_3);
 
@@ -92,11 +96,13 @@ int main(int argc, char **argv) {
     WbDeviceTag motor_1 = wb_robot_get_device("motor1");
     WbDeviceTag motor_2 = wb_robot_get_device("motor2");
     WbDeviceTag motor_3 = wb_robot_get_device("motor3");
+    WbDeviceTag motor_post = wb_robot_get_device("motor_post");
 
    /* SETTING POSITION OF THE MOTORS */
     wb_motor_set_position(motor_1, INFINITY);
     wb_motor_set_position(motor_2, INFINITY);
     wb_motor_set_position(motor_3, INFINITY);
+    wb_motor_set_position(motor_post, INFINITY);
 
    /* IMPORTING DISTANCE SENSORS */
     WbDeviceTag distance_sensor1 = wb_robot_get_device("distance_sensor1");
@@ -138,11 +144,11 @@ int main(int argc, char **argv) {
         if (key == 'W') {
             robot_status = MANUAL;
             printf("MANUAL MODE ACTIVATED\n");
-
         }
         else if (key == 'G') {
             robot_status = AUTONOMOUS;
             printf("AUTONOMOUS MODE ACTIVATED\n");
+            // turnPost(motor_post);
         }
         else {
           stopAllWheels(motor_1, motor_2, motor_3);
@@ -154,7 +160,7 @@ int main(int argc, char **argv) {
         switch (robot_status) {
             case MANUAL:     manual(key, motor_1, motor_2, motor_3);
                              break;
-            case AUTONOMOUS: autonomous(motor_1, motor_2, motor_3,
+            case AUTONOMOUS: autonomous(motor_1, motor_2, motor_3, motor_post,
                              distance_sensor_value1, distance_sensor_value2,
                              desired_centimeters);
                              break;
@@ -177,9 +183,9 @@ int main(int argc, char **argv) {
 
     };
 
-  wb_robot_cleanup();
+    wb_robot_cleanup();
 
-  return 0;
+    return 0;
 }
 
 
@@ -189,22 +195,22 @@ float bitsToCentimeters(float centimeters) {
 
 void stopAllWheels(WbDeviceTag motor_1, WbDeviceTag motor_2,
                    WbDeviceTag motor_3) {
-    wb_motor_set_velocity(motor_1, 0);
-    wb_motor_set_velocity(motor_2, 0);
-    wb_motor_set_velocity(motor_3, 0);
+     wb_motor_set_velocity(motor_1, 0);
+     wb_motor_set_velocity(motor_2, 0);
+     wb_motor_set_velocity(motor_3, 0);
 }
 
 void stopRobot(WbDeviceTag motor_1, WbDeviceTag motor_2, WbDeviceTag motor_3) {
-    wb_motor_set_velocity(motor_1, 0);
-    wb_motor_set_velocity(motor_2, 0);
-    wb_motor_set_velocity(motor_3, 0);
+     wb_motor_set_velocity(motor_1, 0);
+     wb_motor_set_velocity(motor_2, 0);
+     wb_motor_set_velocity(motor_3, 0);
 }
 
 void moveForwardRobotManual(WbDeviceTag motor_1, WbDeviceTag motor_2, WbDeviceTag
                             motor_3) {
-    wb_motor_set_velocity(motor_1,VELOCITY_MANUAL);
-    wb_motor_set_velocity(motor_2,VELOCITY_MANUAL);
-    wb_motor_set_velocity(motor_3,0);
+     wb_motor_set_velocity(motor_1,VELOCITY_MANUAL);
+     wb_motor_set_velocity(motor_2,VELOCITY_MANUAL);
+     wb_motor_set_velocity(motor_3,0);
 }
 
 void moveBackwardRobot(WbDeviceTag motor_1, WbDeviceTag motor_2, WbDeviceTag
@@ -216,34 +222,34 @@ void moveBackwardRobot(WbDeviceTag motor_1, WbDeviceTag motor_2, WbDeviceTag
 
 void moveLeftRobot(WbDeviceTag motor_1, WbDeviceTag motor_2, WbDeviceTag
                    motor_3) {
-     wb_motor_set_velocity(motor_1, 4);
-     wb_motor_set_velocity(motor_2,-4);
-     wb_motor_set_velocity(motor_3, 8);
+    wb_motor_set_velocity(motor_1, 4);
+    wb_motor_set_velocity(motor_2,-4);
+    wb_motor_set_velocity(motor_3, 8);
 }
 void moveRightRobot(WbDeviceTag motor_1, WbDeviceTag motor_2, WbDeviceTag
                     motor_3) {
-      wb_motor_set_velocity(motor_1,-4);
-      wb_motor_set_velocity(motor_2, 4);
-      wb_motor_set_velocity(motor_3,-8);
+    wb_motor_set_velocity(motor_1,-4);
+    wb_motor_set_velocity(motor_2, 4);
+    wb_motor_set_velocity(motor_3,-8);
 }
 void turnLeftRobot(WbDeviceTag motor_1, WbDeviceTag motor_2, WbDeviceTag
                    motor_3) {
-       wb_motor_set_velocity(motor_1,degreesSec2RadSec());
-       wb_motor_set_velocity(motor_2,-degreesSec2RadSec());
-       wb_motor_set_velocity(motor_3,-degreesSec2RadSec());
+    wb_motor_set_velocity(motor_1,degreesSec2RadSec());
+    wb_motor_set_velocity(motor_2,-degreesSec2RadSec());
+    wb_motor_set_velocity(motor_3,-degreesSec2RadSec());
 }
 void turnRightRobot(WbDeviceTag motor_1, WbDeviceTag motor_2, WbDeviceTag
                     motor_3) {
-        wb_motor_set_velocity(motor_1,-degreesSec2RadSec());
-        wb_motor_set_velocity(motor_2,degreesSec2RadSec());
-        wb_motor_set_velocity(motor_3,degreesSec2RadSec());
+    wb_motor_set_velocity(motor_1,-degreesSec2RadSec());
+    wb_motor_set_velocity(motor_2,degreesSec2RadSec());
+    wb_motor_set_velocity(motor_3,degreesSec2RadSec());
 }
 
 void moveForwardRobotAutonomous(WbDeviceTag motor_1, WbDeviceTag motor_2,
                                 WbDeviceTag motor_3) {
-        wb_motor_set_velocity(motor_1, VELOCITY_AUTONOMOUS);
-        wb_motor_set_velocity(motor_2, VELOCITY_AUTONOMOUS);
-        wb_motor_set_velocity(motor_3, 0);
+    wb_motor_set_velocity(motor_1, VELOCITY_AUTONOMOUS);
+    wb_motor_set_velocity(motor_2, VELOCITY_AUTONOMOUS);
+    wb_motor_set_velocity(motor_3, 0);
 }
 
 float linearVelocity(float meters_per_second) {
@@ -263,6 +269,10 @@ float degreesSec2RadSec(void) {
     rad_sec = TURN_RATIO * 0.017452;
 
     return rad_sec;
+}
+
+void turnPost(WbDeviceTag motor_post) {
+    wb_motor_set_velocity(motor_post, VELOCITY_POST);
 }
 
 
@@ -306,9 +316,10 @@ void manual(int key, WbDeviceTag motor_1, WbDeviceTag motor_2,
 }
 
 void autonomous(WbDeviceTag motor_1, WbDeviceTag motor_2, WbDeviceTag motor_3,
-                double distance_sensor_value1, double distance_sensor_value2,
-                float desired_centimeters) {
+                WbDeviceTag motor_post, double distance_sensor_value1,
+                double distance_sensor_value2, float desired_centimeters) {
 
+    turnPost(motor_post);
 
     /* MOVE FORWARD */
     if (distance_sensor_value1 > desired_centimeters || distance_sensor_value2
