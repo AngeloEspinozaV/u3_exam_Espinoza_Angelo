@@ -2,8 +2,8 @@
 WorldInfo {
 }
 Viewpoint {
-  orientation 0.13682867054057476 0.9644188025948847 0.22621734707919253 4.197741705286302
-  position -1.536736139554946 0.5696491461806521 -0.37994112434060684
+  orientation -0.6818345721307616 -0.7169249761308759 -0.1453278873685441 0.5779574498497683
+  position -1.9206437125989968 1.5275325912070647 1.7778436112588079
   follow "robot"
   followOrientation TRUE
 }
@@ -540,7 +540,7 @@ Robot {
               ]
               endPoint Solid {
                 translation -5.0801073314498465e-05 0.0004330319098755056 1.170381764481476e-05
-                rotation -2.3587923327307986e-07 6.091967498163562e-06 -0.999999999981416 0.18654317754720182
+                rotation -2.358792332730799e-07 6.091967498163563e-06 -0.9999999999814161 0.18654317754720182
                 children [
                   DEF WHEEL_TR3 Transform {
                     rotation 1 0 0 1.57
@@ -952,7 +952,7 @@ Solid {
   boundingObject USE WALLS_SH
 }
 Solid {
-  translation 0 0.22999999999999998 -1.5612511283791264e-17
+  translation -0.43999999999999995 0.025 -1.5612511283791264e-17
   children [
     DEF OBSTACLE1_SH Shape {
       appearance PBRAppearance {
@@ -961,7 +961,7 @@ Solid {
         metalness 0
       }
       geometry Cylinder {
-        height 0.25
+        height 0.1
         radius 0.1
       }
     }
@@ -1060,7 +1060,7 @@ Solid {
   boundingObject USE OBSTACLE1_SH
 }
 Solid {
-  translation 0.020000000000000615 0.25 -1.6599999999999997
+  translation -0.6799999999999995 0.27 -1.6599999999999997
   children [
     DEF OBSTACLE3_SH Shape {
       appearance PBRAppearance {
@@ -1069,7 +1069,7 @@ Solid {
         metalness 0
       }
       geometry Cylinder {
-        height 0.5
+        height 0.3
         radius 0.1
       }
     }
