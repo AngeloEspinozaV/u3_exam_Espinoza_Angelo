@@ -2,8 +2,8 @@
 WorldInfo {
 }
 Viewpoint {
-  orientation 0.28232630877323933 0.8959857291955893 0.342784813625583 4.413090102859801
-  position -2.732046775236083 1.8245296294760955 -0.3730571970474231
+  orientation 0.04207717187127248 0.9770817299249709 0.2086643348877367 3.5306662366358212
+  position -1.0463837558556301 0.18458773146868046 -0.14559581243661687
   follow "robot"
   followOrientation TRUE
 }
@@ -540,7 +540,7 @@ Robot {
               ]
               endPoint Solid {
                 translation -5.0801073314498465e-05 0.0004330319098755056 1.170381764481476e-05
-                rotation -2.3587923327307986e-07 6.091967498163562e-06 -0.999999999981416 0.18654317754720182
+                rotation -2.3587923327307992e-07 6.091967498163564e-06 -0.9999999999814162 0.18654317754720182
                 children [
                   DEF WHEEL_TR3 Transform {
                     rotation 1 0 0 1.57
@@ -780,78 +780,124 @@ Robot {
       translation -0.03 0.05 0
       rotation 0 1 0 1.57
       children [
-        HingeJoint {
-          jointParameters HingeJointParameters {
-            axis 0 1 0
-          }
-          device [
-            RotationalMotor {
-              name "motor_post"
-              maxVelocity 30.36872
-              maxTorque 0.847386219999996
-            }
-          ]
-          endPoint Solid {
-            children [
-              DEF POST_SH Transform {
+        Transform {
+          children [
+            DEF DETECTOR_HJ HingeJoint {
+              jointParameters HingeJointParameters {
+                axis 0 1 0
+              }
+              device [
+                RotationalMotor {
+                  name "motor_post"
+                  maxVelocity 30.36872
+                  maxTorque 0.847386219999996
+                }
+                PositionSensor {
+                  name "position_sensor_detector"
+                  resolution 0.003848528
+                }
+              ]
+              endPoint Solid {
                 children [
-                  DEF POST_SH Shape {
-                    appearance PBRAppearance {
-                      baseColor 0.9333333333333333 0.9333333333333333 0.9254901960784314
-                      roughness 1
-                      metalness 0
-                    }
-                    geometry Cylinder {
-                      height 0.05
-                      radius 0.01
-                    }
-                  }
-                  DEF DETECTOR_TR Transform {
-                    translation 0 0.019999999999999997 -0.01
+                  DEF POST_TR Transform {
                     children [
-                      DEF DETECTOR_SH Shape {
+                      DEF POST_SH Shape {
                         appearance PBRAppearance {
-                          baseColor 0.9372549019607843 0.1607843137254902 0.1607843137254902
+                          baseColor 0.9333333333333333 0.9333333333333333 0.9254901960784314
                           roughness 1
                           metalness 0
                         }
-                        geometry Box {
-                          size 0.005 0.003 0.02
+                        geometry Cylinder {
+                          height 0.05
+                          radius 0.01
                         }
                       }
-                      DEF DETECTOR_DS DistanceSensor {
-                        rotation 0 1 0 1.5758
-                        name "detector"
-                      }
-                    ]
-                  }
-                  DEF GUN_TR Transform {
-                    translation 0 0.01 -0.01
-                    children [
-                      DEF GUN_SH Shape {
-                        appearance PBRAppearance {
-                          baseColor 0.45098039215686275 0.8235294117647058 0.08627450980392157
-                          roughness 1
-                          metalness 0
-                        }
-                        geometry Box {
-                          size 0.005 0.003 0.015
-                        }
-                      }
-                      DEF GUN_SH DistanceSensor {
-                        rotation 0 1 0 1.5758
-                        name "gun"
+                      DEF DETECTOR_TR Transform {
+                        translation 0 0.019999999999999997 -0.01
+                        children [
+                          DEF DETECTOR_SH Shape {
+                            appearance PBRAppearance {
+                              baseColor 0.9372549019607843 0.1607843137254902 0.1607843137254902
+                              roughness 1
+                              metalness 0
+                            }
+                            geometry Box {
+                              size 0.005 0.003 0.02
+                            }
+                          }
+                          DEF DETECTOR_DS DistanceSensor {
+                            rotation 0 1 0 1.5758
+                            name "detector"
+                            lookupTable [
+                              0 0 0
+                              0.05 0 0
+                              0.4 255 0
+                            ]
+                          }
+                        ]
                       }
                     ]
                   }
                 ]
+                name "solid(4)"
+                boundingObject USE POST_SH
+                physics Physics {
+                }
               }
-            ]
-            name "solid(3)"
-            boundingObject USE POST_SH
-            physics Physics {
             }
-          }
+            DEF GUN_HJ HingeJoint {
+              jointParameters HingeJointParameters {
+                axis 0 1 0
+              }
+              device [
+                RotationalMotor {
+                  name "motor_gun"
+                  maxVelocity 30.36872
+                  maxTorque 0.847386219999996
+                }
+                PositionSensor {
+                  name "position_sensor_gun"
+                  resolution 0.003848528
+                }
+              ]
+              endPoint Solid {
+                children [
+                  DEF GUN Transform {
+                    children [
+                      DEF GUN_TR Transform {
+                        translation 0 0.01 -0.01
+                        children [
+                          DEF GUN_SH Shape {
+                            appearance PBRAppearance {
+                              baseColor 0.45098039215686275 0.8235294117647058 0.08627450980392157
+                              roughness 1
+                              metalness 0
+                            }
+                            geometry Box {
+                              size 0.005 0.003 0.015
+                            }
+                          }
+                          DEF GUN_DS DistanceSensor {
+                            rotation 0 1 0 1.5758
+                            name "gun"
+                            lookupTable [
+                              0 0 0
+                              0.1 0 0
+                              2 1023 0
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+                name "solid(3)"
+                boundingObject USE GUN_SH
+                physics Physics {
+                }
+              }
+            }
+          ]
         }
       ]
     }

@@ -43,13 +43,15 @@ float degreesSec2RadSec(void);
 
 void turnPost(WbDeviceTag motor_post);
 
+void turnGun(WbDeviceTag motor_gun);
+
 void manual(int key, WbDeviceTag motor_1, WbDeviceTag motor_2,
             WbDeviceTag motor_3);
 
 void autonomous(WbDeviceTag motor_1, WbDeviceTag motor_2,
-                WbDeviceTag motor_3, WbDeviceTag motor_post,
-                double distance_sensor_value1, double distance_sensor_value2,
-                float desired_centimeters);
+                WbDeviceTag motor_3, WbDeviceTag motor_post, WbDeviceTag
+                motor_gun, double distance_sensor_value1, double
+                distance_sensor_value2, float desired_centimeters);
 
 void stopRobot(WbDeviceTag motor_1, WbDeviceTag motor_2, WbDeviceTag motor_3);
 
@@ -97,12 +99,14 @@ int main(int argc, char **argv) {
     WbDeviceTag motor_2 = wb_robot_get_device("motor2");
     WbDeviceTag motor_3 = wb_robot_get_device("motor3");
     WbDeviceTag motor_post = wb_robot_get_device("motor_post");
+    WbDeviceTag motor_gun = wb_robot_get_device("motor_gun");
 
    /* SETTING POSITION OF THE MOTORS */
     wb_motor_set_position(motor_1, INFINITY);
     wb_motor_set_position(motor_2, INFINITY);
     wb_motor_set_position(motor_3, INFINITY);
     wb_motor_set_position(motor_post, INFINITY);
+    wb_motor_set_position(motor_gun, INFINITY);
 
    /* IMPORTING DISTANCE SENSORS */
     WbDeviceTag distance_sensor1 = wb_robot_get_device("distance_sensor1");
@@ -116,6 +120,8 @@ int main(int argc, char **argv) {
     WbDeviceTag position_sensor1 = wb_robot_get_device("position_sensor1");
     WbDeviceTag position_sensor2 = wb_robot_get_device("position_sensor2");
     WbDeviceTag position_sensor3 = wb_robot_get_device("position_sensor3");
+    WbDeviceTag position_sensor_detector = wb_robot_get_device("position_sensor_detector");
+    WbDeviceTag position_sensor_gun = wb_robot_get_device("position_sensor_gun");
 
    /* ENABLING POSITION SENSORS */
     wb_position_sensor_enable(position_sensor1, TIME_STEP);
@@ -161,8 +167,8 @@ int main(int argc, char **argv) {
             case MANUAL:     manual(key, motor_1, motor_2, motor_3);
                              break;
             case AUTONOMOUS: autonomous(motor_1, motor_2, motor_3, motor_post,
-                             distance_sensor_value1, distance_sensor_value2,
-                             desired_centimeters);
+                             motor_gun, distance_sensor_value1,
+                             distance_sensor_value2, desired_centimeters);
                              break;
         }
 
@@ -275,7 +281,9 @@ void turnPost(WbDeviceTag motor_post) {
     wb_motor_set_velocity(motor_post, VELOCITY_POST);
 }
 
-
+void turnGun(WbDeviceTag motor_gun) {
+    wb_motor_set_velocity(motor_gun, VELOCITY_POST);
+}
 
 void manual(int key, WbDeviceTag motor_1, WbDeviceTag motor_2,
             WbDeviceTag motor_3) {
@@ -316,10 +324,12 @@ void manual(int key, WbDeviceTag motor_1, WbDeviceTag motor_2,
 }
 
 void autonomous(WbDeviceTag motor_1, WbDeviceTag motor_2, WbDeviceTag motor_3,
-                WbDeviceTag motor_post, double distance_sensor_value1,
-                double distance_sensor_value2, float desired_centimeters) {
+                WbDeviceTag motor_post, WbDeviceTag motor_gun, double
+                distance_sensor_value1, double distance_sensor_value2,
+                float desired_centimeters) {
 
     turnPost(motor_post);
+
 
     /* MOVE FORWARD */
     if (distance_sensor_value1 > desired_centimeters || distance_sensor_value2
