@@ -50,8 +50,10 @@ void manual(int key, WbDeviceTag motor_1, WbDeviceTag motor_2,
 
 void autonomous(WbDeviceTag motor_1, WbDeviceTag motor_2,
                 WbDeviceTag motor_3, WbDeviceTag motor_post, WbDeviceTag
-                motor_gun, double distance_sensor_value1, double
-                distance_sensor_value2, float desired_centimeters);
+                motor_gun, WbDeviceTag position_sensor_detector, WbDeviceTag
+                position_sensor_gun, double distance_sensor_value1, double
+                distance_sensor_value2, float desired_centimeters, WbDeviceTag
+                distance_detector, WbDeviceTag distance_gun);
 
 void stopRobot(WbDeviceTag motor_1, WbDeviceTag motor_2, WbDeviceTag motor_3);
 
@@ -111,22 +113,29 @@ int main(int argc, char **argv) {
    /* IMPORTING DISTANCE SENSORS */
     WbDeviceTag distance_sensor1 = wb_robot_get_device("distance_sensor1");
     WbDeviceTag distance_sensor2 = wb_robot_get_device("distance_sensor2");
+    WbDeviceTag distance_detector = wb_robot_get_device("distance_detector");
+    WbDeviceTag distance_gun = wb_robot_get_device("distance_gun");
 
    /* ENABLING ENCODERS */
     wb_distance_sensor_enable(distance_sensor1, TIME_STEP);
     wb_distance_sensor_enable(distance_sensor2, TIME_STEP);
+    wb_distance_sensor_enable(distance_detector, TIME_STEP);
+    wb_distance_sensor_enable(distance_gun, TIME_STEP);
 
    /* IMPORTING POSITION SENSOR */
     WbDeviceTag position_sensor1 = wb_robot_get_device("position_sensor1");
     WbDeviceTag position_sensor2 = wb_robot_get_device("position_sensor2");
     WbDeviceTag position_sensor3 = wb_robot_get_device("position_sensor3");
-    WbDeviceTag position_sensor_detector = wb_robot_get_device("position_sensor_detector");
+    WbDeviceTag position_sensor_detector = wb_robot_get_device(
+                                           "position_sensor_detector");
     WbDeviceTag position_sensor_gun = wb_robot_get_device("position_sensor_gun");
 
    /* ENABLING POSITION SENSORS */
     wb_position_sensor_enable(position_sensor1, TIME_STEP);
     wb_position_sensor_enable(position_sensor2, TIME_STEP);
     wb_position_sensor_enable(position_sensor3, TIME_STEP);
+    wb_position_sensor_enable(position_sensor_detector, TIME_STEP);
+    wb_position_sensor_enable(position_sensor_gun, TIME_STEP);
 
    /* ENABLING THE KEYBOARD */
     wb_keyboard_enable(TIME_STEP);
@@ -157,19 +166,7 @@ int main(int argc, char **argv) {
             // turnPost(motor_post);
         }
         else {
-          stopAllWheels(motor_1, motor_2, motor_3);
-        }
-
-        distance_sensor_value1 = wb_distance_sensor_get_value(distance_sensor1);
-        distance_sensor_value2 = wb_distance_sensor_get_value(distance_sensor2);
-
-        switch (robot_status) {
-            case MANUAL:     manual(key, motor_1, motor_2, motor_3);
-                             break;
-            case AUTONOMOUS: autonomous(motor_1, motor_2, motor_3, motor_post,
-                             motor_gun, distance_sensor_value1,
-                             distance_sensor_value2, desired_centimeters);
-                             break;
+            stopAllWheels(motor_1, motor_2, motor_3);
         }
 
         distance_sensor_value1 = wb_distance_sensor_get_value(distance_sensor1);
@@ -178,6 +175,21 @@ int main(int argc, char **argv) {
         position_sensor_value1 = wb_position_sensor_get_value(position_sensor1);
         position_sensor_value2 = wb_position_sensor_get_value(position_sensor2);
         position_sensor_value3 = wb_position_sensor_get_value(position_sensor3);
+
+
+
+        switch (robot_status) {
+            case MANUAL:     manual(key, motor_1, motor_2, motor_3);
+                             break;
+            case AUTONOMOUS: autonomous(motor_1, motor_2, motor_3, motor_post,
+                             motor_gun, position_sensor_detector,
+                             position_sensor_gun, distance_sensor_value1,
+                             distance_sensor_value2, desired_centimeters,
+                             distance_detector, distance_gun);
+                             break;
+        }
+
+
 
         printf("%s  %.4f || %s %.4f || %s %.4f || %s %.4f || %s %.4f\n",
         msg1, distance_sensor_value1, msg2, position_sensor_value1, msg3,
@@ -323,13 +335,28 @@ void manual(int key, WbDeviceTag motor_1, WbDeviceTag motor_2,
     }
 }
 
-void autonomous(WbDeviceTag motor_1, WbDeviceTag motor_2, WbDeviceTag motor_3,
-                WbDeviceTag motor_post, WbDeviceTag motor_gun, double
-                distance_sensor_value1, double distance_sensor_value2,
-                float desired_centimeters) {
+void autonomous(WbDeviceTag motor_1, WbDeviceTag motor_2,
+                WbDeviceTag motor_3, WbDeviceTag motor_post, WbDeviceTag
+                motor_gun, WbDeviceTag position_sensor_detector, WbDeviceTag
+                position_sensor_gun, double distance_sensor_value1, double
+                distance_sensor_value2, float desired_centimeters, WbDeviceTag
+                distance_detector, WbDeviceTag distance_gun) {
 
+    /* CONSTANTLY MOVE THE POST TO DETECT ENEMIES*/
     turnPost(motor_post);
 
+    /* VARIABLES */
+    double position_sensor_detector_value = wb_position_sensor_get_value(
+                                            position_sensor_detector);
+    double position_sensor_gun_value = wb_position_sensor_get_value(
+                                       position_sensor_gun);
+    double distance_detector_value = wb_distance_sensor_get_value
+                                   (distance_detector);
+    double distance_detector_gun = wb_distance_sensor_get_value(distance_gun);
+
+    printf("DETECTOR %lf GUN %lf\n", distance_detector_value, distance_detector_gun);
+
+    
 
     /* MOVE FORWARD */
     if (distance_sensor_value1 > desired_centimeters || distance_sensor_value2

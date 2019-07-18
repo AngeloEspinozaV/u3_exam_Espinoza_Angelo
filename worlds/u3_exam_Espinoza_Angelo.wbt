@@ -2,8 +2,8 @@
 WorldInfo {
 }
 Viewpoint {
-  orientation 0.04207717187127248 0.9770817299249709 0.2086643348877367 3.5306662366358212
-  position -1.0463837558556301 0.18458773146868046 -0.14559581243661687
+  orientation 0.12542254425610977 0.9599223420080806 0.25063575703806895 4.037221005036128
+  position -1.4853738173360107 0.46103863016865376 -0.35712731724512176
   follow "robot"
   followOrientation TRUE
 }
@@ -827,7 +827,7 @@ Robot {
                           }
                           DEF DETECTOR_DS DistanceSensor {
                             rotation 0 1 0 1.5758
-                            name "detector"
+                            name "distance_detector"
                             lookupTable [
                               0 0 0
                               0.05 0 0
@@ -879,7 +879,7 @@ Robot {
                           }
                           DEF GUN_DS DistanceSensor {
                             rotation 0 1 0 1.5758
-                            name "gun"
+                            name "distance_gun"
                             lookupTable [
                               0 0 0
                               0.1 0 0
