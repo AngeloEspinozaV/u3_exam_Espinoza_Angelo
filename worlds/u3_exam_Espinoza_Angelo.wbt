@@ -3,7 +3,7 @@ WorldInfo {
 }
 Viewpoint {
   orientation -0.6818345721307616 -0.7169249761308759 -0.1453278873685441 0.5779574498497683
-  position -1.9206437125989968 1.5275325912070647 1.7778436112588079
+  position -1.2452006958746866 0.5732226379448973 0.8649534549803322
   follow "robot"
   followOrientation TRUE
 }
@@ -540,7 +540,7 @@ Robot {
               ]
               endPoint Solid {
                 translation -5.0801073314498465e-05 0.0004330319098755056 1.170381764481476e-05
-                rotation -2.358792332730799e-07 6.091967498163563e-06 -0.9999999999814161 0.18654317754720182
+                rotation -2.3587923327307986e-07 6.091967498163562e-06 -0.999999999981416 0.18654317754720182
                 children [
                   DEF WHEEL_TR3 Transform {
                     rotation 1 0 0 1.57
@@ -778,126 +778,121 @@ Robot {
     }
     DEF POST_TR Transform {
       translation -0.03 0.05 0
-      rotation 0 1 0 1.57
       children [
-        Transform {
-          children [
-            DEF DETECTOR_HJ HingeJoint {
-              jointParameters HingeJointParameters {
-                axis 0 1 0
-              }
-              device [
-                RotationalMotor {
-                  name "motor_post"
-                  maxVelocity 30.36872
-                  maxTorque 0.847386219999996
-                }
-                PositionSensor {
-                  name "position_sensor_detector"
-                  resolution 0.003848528
-                }
-              ]
-              endPoint Solid {
+        DEF DETECTOR_HJ HingeJoint {
+          jointParameters HingeJointParameters {
+            axis 0 1 0
+          }
+          device [
+            RotationalMotor {
+              name "motor_post"
+              maxVelocity 30.36872
+              maxTorque 0.847386219999996
+            }
+            PositionSensor {
+              name "position_sensor_detector"
+              resolution 0.003848528
+            }
+          ]
+          endPoint Solid {
+            children [
+              DEF POST_TR Transform {
                 children [
-                  DEF POST_TR Transform {
+                  DEF POST_SH Shape {
+                    appearance PBRAppearance {
+                      baseColor 0.9333333333333333 0.9333333333333333 0.9254901960784314
+                      roughness 1
+                      metalness 0
+                    }
+                    geometry Cylinder {
+                      height 0.05
+                      radius 0.01
+                    }
+                  }
+                  DEF DETECTOR_TR Transform {
+                    translation 0 0.019999999999999997 -0.01
                     children [
-                      DEF POST_SH Shape {
+                      DEF DETECTOR_SH Shape {
                         appearance PBRAppearance {
-                          baseColor 0.9333333333333333 0.9333333333333333 0.9254901960784314
+                          baseColor 0.9372549019607843 0.1607843137254902 0.1607843137254902
                           roughness 1
                           metalness 0
                         }
-                        geometry Cylinder {
-                          height 0.05
-                          radius 0.01
+                        geometry Box {
+                          size 0.005 0.003 0.02
                         }
                       }
-                      DEF DETECTOR_TR Transform {
-                        translation 0 0.019999999999999997 -0.01
-                        children [
-                          DEF DETECTOR_SH Shape {
-                            appearance PBRAppearance {
-                              baseColor 0.9372549019607843 0.1607843137254902 0.1607843137254902
-                              roughness 1
-                              metalness 0
-                            }
-                            geometry Box {
-                              size 0.005 0.003 0.02
-                            }
-                          }
-                          DEF DETECTOR_DS DistanceSensor {
-                            rotation 0 1 0 1.5758
-                            name "distance_detector"
-                            lookupTable [
-                              0 0 0
-                              0.05 0 0
-                              0.4 255 0
-                            ]
-                          }
+                      DEF DETECTOR_DS DistanceSensor {
+                        rotation 0 1 0 1.5758
+                        name "distance_detector"
+                        lookupTable [
+                          0 0 0
+                          0.05 0 0
+                          0.4 255 0
                         ]
                       }
                     ]
                   }
                 ]
-                name "solid(4)"
-                boundingObject USE POST_SH
-                physics Physics {
-                }
               }
+            ]
+            name "solid(5)"
+            boundingObject USE POST_SH
+            physics Physics {
             }
-            DEF GUN_HJ HingeJoint {
-              jointParameters HingeJointParameters {
-                axis 0 1 0
-              }
-              device [
-                RotationalMotor {
-                  name "motor_gun"
-                  maxVelocity 30.36872
-                  maxTorque 0.847386219999996
-                }
-                PositionSensor {
-                  name "position_sensor_gun"
-                  resolution 0.003848528
-                }
-              ]
-              endPoint Solid {
-                children [
-                  DEF GUN Transform {
-                    children [
-                      DEF GUN_TR Transform {
-                        translation 0 0.01 -0.01
-                        children [
-                          DEF GUN_SH Shape {
-                            appearance PBRAppearance {
-                              baseColor 0.45098039215686275 0.8235294117647058 0.08627450980392157
-                              roughness 1
-                              metalness 0
-                            }
-                            geometry Box {
-                              size 0.005 0.003 0.015
-                            }
-                          }
-                          DEF GUN_DS DistanceSensor {
-                            rotation 0 1 0 1.5758
-                            name "distance_gun"
-                            lookupTable [
-                              0 0 0
-                              0.1 0 0
-                              2 1023 0
-                            ]
-                          }
-                        ]
-                      }
-                    ]
-                  }
-                ]
-                name "solid(3)"
-                boundingObject USE GUN_SH
-                physics Physics {
-                }
-              }
+          }
+        }
+        DEF GUN_HJ HingeJoint {
+          jointParameters HingeJointParameters {
+            axis 0 1 0
+          }
+          device [
+            RotationalMotor {
+              name "motor_gun"
+              maxVelocity 30.36872
+              maxTorque 0.847386219999996
+            }
+            PositionSensor {
+              name "position_sensor_gun"
+              resolution 0.003848528
             }
           ]
+          endPoint Solid {
+            children [
+              DEF GUN Transform {
+                children [
+                  DEF GUN_TR Transform {
+                    translation 0 0.01 -0.01
+                    children [
+                      DEF GUN_SH Shape {
+                        appearance PBRAppearance {
+                          baseColor 0.45098039215686275 0.8235294117647058 0.08627450980392157
+                          roughness 1
+                          metalness 0
+                        }
+                        geometry Box {
+                          size 0.005 0.003 0.015
+                        }
+                      }
+                      DEF GUN_DS DistanceSensor {
+                        rotation 0 1 0 1.5758
+                        name "distance_gun"
+                        lookupTable [
+                          0 0 0
+                          0.1 0 0
+                          2 1023 0
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+            name "solid(6)"
+            boundingObject USE GUN_SH
+            physics Physics {
+            }
+          }
         }
       ]
     }
@@ -1060,7 +1055,7 @@ Solid {
   boundingObject USE OBSTACLE1_SH
 }
 Solid {
-  translation -0.6799999999999995 0.27 -1.6599999999999997
+  translation -0.38999999999999924 0.19999999999999996 -0.7399999999999991
   children [
     DEF OBSTACLE3_SH Shape {
       appearance PBRAppearance {

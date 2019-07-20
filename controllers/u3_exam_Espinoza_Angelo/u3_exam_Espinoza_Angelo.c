@@ -33,7 +33,7 @@
 #define TURN_RATIO 45
 #define VELOCITY_POST 3
 
-#define PI 3.141592
+#define PI 3.1415
 
 /* PROTOFUNCTIONS */
 float bitsToCentimeters(float centimeters);
@@ -106,7 +106,11 @@ char *msg2 = "Position sensor wheel 1:";
 char *msg3 = "Distance sensor left value:";
 char *msg4 = "Position sensor wheel 2:";
 char *msg5 = "Position sensor wheel 3:";
-double position_sensor_detector_value;
+double last_position_enemy1;
+double last_position_enemy2;
+double last_position_enemy3;
+double position_now;
+
 int main(int argc, char **argv) {
 
    wb_robot_init();
@@ -123,7 +127,7 @@ int main(int argc, char **argv) {
     wb_motor_set_position(motor_2, INFINITY);
     wb_motor_set_position(motor_3, INFINITY);
     wb_motor_set_position(motor_post, INFINITY);
-    wb_motor_set_position(motor_gun, INFINITY);
+    // wb_motor_set_position(motor_gun, INFINITY);
 
    /* IMPORTING DISTANCE SENSORS */
     WbDeviceTag distance_sensor1 = wb_robot_get_device("distance_sensor1");
@@ -206,17 +210,6 @@ int main(int argc, char **argv) {
                              distance_detector, distance_gun);
                              break;
         }
-
-
-
-        // printf("%s  %.4f || %s %.4f || %s %.4f || %s %.4f || %s %.4f\n",
-        // msg1, distance_sensor_value1, msg2, position_sensor_value1, msg3,
-        // distance_sensor_value2, msg4, position_sensor_value2, msg5,
-        // position_sensor_value3);
-        // printf("\t\t\t\t     %s %.2fm || %s %.2fm\n",
-        // msg1, distance_sensor_value1 * 0.2/MAX_BITS_OBJ, msg3,
-        // distance_sensor_value2 * 0.2/MAX_BITS_OBJ);
-
     };
 
     wb_robot_cleanup();
@@ -387,10 +380,10 @@ void autonomous(WbDeviceTag motor_1, WbDeviceTag motor_2,
 
 
     /* VARIABLES */
-
-
-    double position_sensor_gun_value = wb_position_sensor_get_value(
-                                       position_sensor_gun);
+    double position_sensor_gun_value = wb_position_sensor_get_value
+                                       (position_sensor_gun);
+    double position_sensor_detector_value = wb_position_sensor_get_value
+                                       (position_sensor_detector);
     double distance_detector_value = wb_distance_sensor_get_value
                                    (distance_detector);
     double distance_detector_gun = wb_distance_sensor_get_value(distance_gun);
@@ -399,71 +392,57 @@ void autonomous(WbDeviceTag motor_1, WbDeviceTag motor_2,
     float distance_enemy1 = bitsToCentimeters2(DISTANCE_ENEMY_LVL1);
     float distance_enemy2 = bitsToCentimeters2(DISTANCE_ENEMY_LVL2);
     float distance_enemy3 = bitsToCentimeters2(DISTANCE_ENEMY_LVL3);
-    float max_radians = 6.28319;
-    float max_revolutions = revolutionToRadians(position_sensor_detector_value);
-    float desired_value;
 
-    // printf("The encoder has passed %lf\n", position_sensor_detector_value);
-    // printf("The distance detector%lf\n", distance_detector_value);
-    // printf("The distance enemy %lf\n", distance_enemy1);
-    // printf("max_revolutions: %f position_sensor_gun_value: %lf\n", max_revolutions, position_sensor_gun_value);
 
     /* MOVE FORWARD */
     moveForwardRobotAutonomous(motor_1, motor_2, motor_3);
-    // printf("Linear Velocity is: %.2lfm\n", linearVelocity(0.4));
 
-    if (distance_detector_value < distance_enemy1) {
+    if (position_sensor_detector_value >= 2*PI) {
+        position_now = revolutionToRadians(position_sensor_detector_value);
+    }
+
+    if (distance_detector_value < distance_enemy1 && flag1 == 0 &&
+        distance_detector_value > distance_enemy2) {
         flag1 = 1;
-        position_sensor_detector_value = wb_position_sensor_get_value
-                                        (position_sensor_detector);
+        flag2 = 0;
+        flag3 = 0;
+        last_position_enemy1 = position_now;
     }
 
     if (flag1 == 1) {
         stopRobot(motor_1, motor_2, motor_3);
-        // stopPost(motor_post);
         turnGun(motor_gun);
-        desired_value = position_sensor_detector_value;
-
-        if (position_sensor_gun_value >= position_sensor_detector_value) {
-            stopPost(motor_gun);
-            printf("THATHATHATHATHA!\n");
-        }
+        wb_motor_set_position(motor_gun, last_position_enemy1);
+        printf("THATHATHA\n");
     }
 
-    if (distance_detector_value < distance_enemy2) {
+    if (distance_detector_value < distance_enemy2 && flag2 == 0 &&
+         distance_detector_value > distance_enemy3) {
         flag2 = 1;
-        position_sensor_detector_value = wb_position_sensor_get_value
-                                        (position_sensor_detector);
+        flag1 = 0;
+        flag3 = 0;
+        last_position_enemy2 = position_now;
     }
     if (flag2 == 1) {
         stopRobot(motor_1, motor_2, motor_3);
-        // stopPost(motor_post);
         turnGun(motor_gun);
-
-        if (position_sensor_gun_value >= position_sensor_detector_value) {
-            stopPost(motor_gun);
-            printf("THATHATHATHATHATHATHATHATHA!\n");
-
-        }
+        wb_motor_set_position(motor_gun, last_position_enemy2);
+        printf("THATHATHATHATHATHA\n");
     }
 
-    if (distance_detector_value < distance_enemy3) {
+    if (distance_detector_value < distance_enemy3 && flag3 == 0 &&
+        distance_detector_value > 0) {
         flag3 = 1;
-        position_sensor_detector_value = wb_position_sensor_get_value
-                                        (position_sensor_detector);
+        flag2 = 0;
+        flag1 = 0;
+        last_position_enemy3 = position_now;
     }
 
     if (flag3 == 1) {
         stopRobot(motor_1, motor_2, motor_3);
-        // stopPost(motor_post);
         turnGun(motor_gun);
-
-        if (position_sensor_gun_value >= position_sensor_detector_value) {
-            stopPost(motor_gun);
-            printf("THATHATHATHATHATHATHATHATHATHATHATHATHATHATHA!\n");
-
-
-        }
+        wb_motor_set_position(motor_gun, last_position_enemy3);
+        printf("THATHATHATHATHATHATHATHATHATHATHA\n");
     }
 
     if (distance_sensor_value2 <= desired_centimeters && distance_sensor_value2
