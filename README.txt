@@ -19,12 +19,12 @@ For the position sensor I based on the formula provided:
 
 Therefore, the resolution put in PositionSensor attribute was 0.003848, the noise part was left in 0.
 
-DISTANCE SENSOR (VCNL4040):
+DISTANCE SENSOR:
 
-The distance sensors contain a shape of a cube of dimension 0.01 x 0.01 x 0.01. In the lookupTable attribute basing on the datasheet, the sensor to reproduce is a proximity sensor that operates with a range from 0mm to 200mm, therefore in the lookupTable the the values put were: x = 0, y = 0, z = 0. The datasheet also states that the resolution of the sensor is of 8-bit, for instance using the formula given in class:
+The distance sensors contain a shape of a cube of dimension 0.01 x 0.01 x 0.01. In the lookupTable attribute basing on the datasheet, the sensor to reproduce is a proximity sensor that operates with a range from 0mm to 400mm, therefore in the lookupTable the the values put were: x = 0, y = 0, z = 0. The datasheet also states that the resolution of the sensor is of 8-bit, for instance using the formula given in class:
 
 				resolution = 2^(bit) - 1
-Giving as result resolution = 65535 which will be put together with the maximum distance that the sensor can read (0.2m). 
+Giving as result resolution = 255 which will be put together with the maximum distance that the sensor can read (0.4m). 
 
 				x = 0     y = 0     z = 0
 				x = 0.05  y = 0     z = 0
@@ -35,9 +35,9 @@ This lookupTable for both distace sensor.In this way sensing from 0 (the start o
 
 Also, a function was created, this in order to "convert" the bits to centimeters, and so the functions returns a value in bits, this with the intention of justa giving the parameter, this was possible thanks to a three rule. This also was helpful for the point where is requiered to stop and move the robot at 17 cm. So that the three rule is like this:
 
-			bitsToCentimeters = (desiredCentimeters · 255 bits)/(20 cm)
+			bitsToCentimeters = (desiredCentimeters · 255 bits)/(40 cm)
 
-In this case for 17cm the result was 55704.75 bits, however the functions thanks to the rule of three can compute any bit at any centimeter. 
+In this case for 17cm the result was 108.375 bits, however the functions thanks to the rule of three can compute any bit at any centimeter. 
 
 GUN DISTANCE SENSOR:
 The gun distance sensor is a box shape with dimensions 0.005m x 0.003m x 0.015m which is placed before the detector distance sensor and is green.

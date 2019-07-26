@@ -19,7 +19,7 @@
 
 /* MACROS */
 #define TIME_STEP 64
-#define MAX_BITS_OBJ 65535
+#define MAX_BITS_OBJ 255
 #define MAX_BITS_ENE 255
 #define RADIUS_WHEELS 0.04
 
@@ -195,7 +195,7 @@ int main(int argc, char **argv) {
 
 
 float bitsToCentimeters(float centimeters) {
-    return (MAX_BITS_OBJ*centimeters)/(20);
+    return (MAX_BITS_OBJ*centimeters)/(40);
 }
 
 float bitsToCentimeters2(float centimeters) {
@@ -389,7 +389,7 @@ void autonomous(WbDeviceTag motor_1, WbDeviceTag motor_2,
     }
 
     /* AVOID OBSTACLES LEFT */
-    if (counter_left >= 1 && counter_left <= 70) {
+    if (counter_left >= 1 && counter_left <= 130) {
         turnRightRobot(motor_1, motor_2, motor_3);
         counter_left++;
     } else {
@@ -401,7 +401,7 @@ void autonomous(WbDeviceTag motor_1, WbDeviceTag motor_2,
         < distance_sensor_value2) {
         counter_right++;
     }
-    if (counter_right >= 1 && counter_right <= 70) {
+    if (counter_right >= 1 && counter_right <= 130) {
         turnLeftRobot(motor_1, motor_2, motor_3);
         counter_right++;
     } else {
