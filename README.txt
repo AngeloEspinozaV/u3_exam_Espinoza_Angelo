@@ -21,20 +21,21 @@ Therefore, the resolution put in PositionSensor attribute was 0.003848, the nois
 
 DISTANCE SENSOR (VCNL4040):
 
-The distance sensors contain a shape of a cube of dimension 0.01 x 0.01 x 0.01. In the lookupTable attribute basing on the datasheet, the sensor to reproduce is a proximity sensor that operates with a range from 0mm to 200mm, therefore in the lookupTable the the values put were: x = 0, y = 0, z = 0. The datasheet also states that the resolution of the sensor is of 16-bit, for instance using the formula given in class:
+The distance sensors contain a shape of a cube of dimension 0.01 x 0.01 x 0.01. In the lookupTable attribute basing on the datasheet, the sensor to reproduce is a proximity sensor that operates with a range from 0mm to 200mm, therefore in the lookupTable the the values put were: x = 0, y = 0, z = 0. The datasheet also states that the resolution of the sensor is of 8-bit, for instance using the formula given in class:
 
 				resolution = 2^(bit) - 1
 Giving as result resolution = 65535 which will be put together with the maximum distance that the sensor can read (0.2m). 
 
-				x = 0    y = 0     z = 0
-				x = 0.2  y = 65535 z = 0
+				x = 0     y = 0     z = 0
+				x = 0.05  y = 0     z = 0
+				x = 0.4   y = 255   z = 0
 
 
 This lookupTable for both distace sensor.In this way sensing from 0 (the start of the sensor) to the end of it.
 
 Also, a function was created, this in order to "convert" the bits to centimeters, and so the functions returns a value in bits, this with the intention of justa giving the parameter, this was possible thanks to a three rule. This also was helpful for the point where is requiered to stop and move the robot at 17 cm. So that the three rule is like this:
 
-			bitsToCentimeters = (desiredCentimeters · 65535 bits)/(20 cm)
+			bitsToCentimeters = (desiredCentimeters · 255 bits)/(20 cm)
 
 In this case for 17cm the result was 55704.75 bits, however the functions thanks to the rule of three can compute any bit at any centimeter. 
 

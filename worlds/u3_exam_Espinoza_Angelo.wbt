@@ -2,8 +2,8 @@
 WorldInfo {
 }
 Viewpoint {
-  orientation -0.6818345721307616 -0.7169249761308759 -0.1453278873685441 0.5779574498497683
-  position -1.2452006958746866 0.5732226379448973 0.8649534549803322
+  orientation -0.46415482383055195 -0.7730370130157699 -0.43240499074650557 1.756296045449092
+  position -1.9926962845043512 2.019794764857251 -0.04538162460082937
   follow "robot"
   followOrientation TRUE
 }
@@ -755,7 +755,8 @@ Robot {
       name "distance_sensor1"
       lookupTable [
         0 0 0
-        0.2 65535 0
+        0.05 0 0
+        0.4 255 0
       ]
       resolution 1
     }
@@ -773,7 +774,8 @@ Robot {
       name "distance_sensor2"
       lookupTable [
         0 0 0
-        0.2 65535 0
+        0.05 0 0
+        0.4 255 0
       ]
     }
     DEF POST_TR Transform {
@@ -947,7 +949,7 @@ Solid {
   boundingObject USE WALLS_SH
 }
 Solid {
-  translation -0.43999999999999995 0.025 -1.5612511283791264e-17
+  translation -0.43999999999999995 0.025 0.019999999999999983
   children [
     DEF OBSTACLE1_SH Shape {
       appearance PBRAppearance {
@@ -1055,7 +1057,7 @@ Solid {
   boundingObject USE OBSTACLE1_SH
 }
 Solid {
-  translation -0.38999999999999924 0.19999999999999996 -0.7399999999999991
+  translation -0.38999999999999924 0.24 -0.7399999999999991
   children [
     DEF OBSTACLE3_SH Shape {
       appearance PBRAppearance {
